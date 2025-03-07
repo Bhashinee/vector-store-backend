@@ -1,9 +1,29 @@
-from pinecone import Pinecone
+from pinecone import Pinecone, ServerlessSpec
+import time
 
 def add_to_pinecone_index(documents, index_name, pinecone_apikey, batch_size=100):
     print("Received call to add to store.")
     pc = Pinecone(api_key=pinecone_apikey)
-    index = pc.Index(name=index_name)
+
+    try:
+        # Check if the index exists, if not create it
+        existing_indexes = [index_info["name"] for index_info in pc.list_indexes()]
+
+        if index_name not in existing_indexes:
+            pc.create_index(
+                name=index_name,
+                dimension=len(documents[0]["values"]),
+                metric="cosine",
+                spec=ServerlessSpec(cloud="aws", region="us-east-1"),
+            )
+            while not pc.describe_index(index_name).status["ready"]:
+                time.sleep(1)
+
+        index = pc.Index(index_name)
+    except Exception as e:
+        print(f"Error creating index: {str(e)}")
+        raise e
+
     
     # Calculate number of batches
     total_docs = len(documents)
