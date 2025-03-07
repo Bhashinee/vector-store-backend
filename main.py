@@ -5,8 +5,18 @@ from request_registry import RequestRegistry
 from validate_request import missing_vectordb_params
 from ingest import ingest_to_store
 from retrieve import retrieve_from_store
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
+
+# Add CORSMiddleware to the FastAPI app
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins="*",  # List of allowed origins
+    allow_credentials=True,
+    allow_methods=["*"],  # Allows all methods (GET, POST, etc.)
+    allow_headers=["*"],  # Allows all headers
+)
 
 
 ## Initialize Registry to hold configurations for each request_id
