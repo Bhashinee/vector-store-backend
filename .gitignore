@@ -1,3 +1,12 @@
+# env
+/.venv
+
+# temporary files
+/_temp
+
+# cache
+**/__pycache__
+
 # Compiled class file
 *.class
 

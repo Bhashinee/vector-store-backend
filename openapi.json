@@ -1,0 +1,559 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "FastAPI",
+    "version": "0.1.1"
+  },
+  "paths": {
+    "/setup": {
+      "post": {
+        "summary": "Details",
+        "operationId": "details_setup_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VectorStoreSetupRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/upload": {
+      "post": {
+        "summary": "Upload",
+        "operationId": "upload_upload_post",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_upload_upload_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/retrieve": {
+      "post": {
+        "summary": "Retrieve",
+        "operationId": "retrieve_retrieve_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VectorStoreRetrieveRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RetrieveResponseModel"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Body_upload_upload_post": {
+        "properties": {
+          "requestId": {
+            "type": "string",
+            "title": "Requestid"
+          },
+          "file": {
+            "type": "string",
+            "format": "binary",
+            "title": "File"
+          }
+        },
+        "type": "object",
+        "required": [
+          "requestId",
+          "file"
+        ],
+        "title": "Body_upload_upload_post"
+      },
+      "Chunk": {
+        "properties": {
+          "text": {
+            "type": "string",
+            "title": "Text"
+          },
+          "source": {
+            "type": "string",
+            "title": "Source"
+          }
+        },
+        "type": "object",
+        "required": [
+          "text",
+          "source"
+        ],
+        "title": "Chunk"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "RetrieveResponseModel": {
+        "properties": {
+          "query": {
+            "type": "string",
+            "title": "Query"
+          },
+          "retrieved_chunks": {
+            "items": {
+              "$ref": "#/components/schemas/Chunk"
+            },
+            "type": "array",
+            "title": "Retrieved Chunks"
+          }
+        },
+        "type": "object",
+        "required": [
+          "query",
+          "retrieved_chunks"
+        ],
+        "title": "RetrieveResponseModel"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      },
+      "VectorStoreRetrieveRequest": {
+        "properties": {
+          "vectordb_provider": {
+            "type": "string",
+            "title": "Vectordb Provider",
+            "description": "The provider of the vector database (e.g., 'Chroma', 'Pinecone')"
+          },
+          "pinecone_apikey": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pinecone Apikey",
+            "description": "API key for accessing the vector database provider"
+          },
+          "chroma_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Chroma Url",
+            "description": "The URL for the Chroma vector database instance"
+          },
+          "chroma_port": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Chroma Port",
+            "description": "The port Chroma is running on"
+          },
+          "postgres_host": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Postgres Host",
+            "description": "Host of the Postgres Database"
+          },
+          "postgres_user": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Postgres User",
+            "description": "User of the Postgres Database"
+          },
+          "postgres_password": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Postgres Password",
+            "description": "Password of the Postgres Database"
+          },
+          "postgres_dbname": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Postgres Dbname",
+            "description": "Name of the Postgres Database"
+          },
+          "postgres_table_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Postgres Table Name",
+            "description": "Name of the table in the Postgres Database"
+          },
+          "collection_name": {
+            "type": "string",
+            "title": "Collection Name",
+            "description": "The name of the collection to store or query from in the vector DB"
+          },
+          "embedding_model": {
+            "type": "string",
+            "title": "Embedding Model",
+            "description": "The model used for embedding (e.g., OpenAI"
+          },
+          "embedding_model_apikey": {
+            "type": "string",
+            "title": "Embedding Model Apikey",
+            "description": "API key for accessing the embedding model"
+          },
+          "user_query": {
+            "type": "string",
+            "title": "User Query",
+            "description": "The query submitted by the user for which the similar text chunks from the vector store will be retrieved"
+          },
+          "max_retrieve_chunks": {
+            "type": "integer",
+            "title": "Max Retrieve Chunks",
+            "description": "The maximum number of chunks to retrieve from the vector store"
+          },
+          "min_similarity_threshold": {
+            "type": "number",
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Min Similarity Threshold",
+            "description": "The minimum similarity to the given embedding of the given query, each retrieved chunk must have. (Value between 0 and 1)"
+          }
+        },
+        "type": "object",
+        "required": [
+          "vectordb_provider",
+          "collection_name",
+          "embedding_model",
+          "embedding_model_apikey",
+          "user_query",
+          "max_retrieve_chunks",
+          "min_similarity_threshold"
+        ],
+        "title": "VectorStoreRetrieveRequest",
+        "example": {
+          "chroma_url": "http://localhost:8000",
+          "collection_name": "my_collection",
+          "embedding_model": "OpenAI",
+          "embedding_model_apikey": "your_embedding_model_apikey",
+          "max_retrieve_chunks": 5,
+          "min_similarity_threshold": 0.75,
+          "user_query": "What is the capital of France?",
+          "vectordb_provider": "Chroma"
+        }
+      },
+      "VectorStoreSetupRequest": {
+        "properties": {
+          "request_id": {
+            "type": "string",
+            "title": "Request Id",
+            "description": "Unique identifier to link setup and upload requests"
+          },
+          "file_count": {
+            "type": "integer",
+            "title": "File Count",
+            "description": "The number of files uploaded with the request id",
+            "default": 1
+          },
+          "vectordb_provider": {
+            "type": "string",
+            "title": "Vectordb Provider",
+            "description": "The provider of the vector database (e.g., 'Chroma', 'Pinecone')"
+          },
+          "pinecone_apikey": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pinecone Apikey",
+            "description": "API key for accessing the vector database provider"
+          },
+          "chroma_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Chroma Url",
+            "description": "The URL for the Chroma vector database instance"
+          },
+          "chroma_port": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Chroma Port",
+            "description": "The port Chroma is running on"
+          },
+          "postgres_host": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Postgres Host",
+            "description": "Host of the Postgres Database"
+          },
+          "postgres_user": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Postgres User",
+            "description": "User of the Postgres Database"
+          },
+          "postgres_password": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Postgres Password",
+            "description": "Password of the Postgres Database"
+          },
+          "postgres_dbname": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Postgres Dbname",
+            "description": "Name of the Postgres Database"
+          },
+          "postgres_table_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Postgres Table Name",
+            "description": "Name of the table in the Postgres Database"
+          },
+          "collection_name": {
+            "type": "string",
+            "title": "Collection Name",
+            "description": "The name of the collection to store or query from in the vector DB"
+          },
+          "embedding_model": {
+            "type": "string",
+            "title": "Embedding Model",
+            "description": "The model used for embedding (e.g., OpenAI"
+          },
+          "embedding_model_apikey": {
+            "type": "string",
+            "title": "Embedding Model Apikey",
+            "description": "API key for accessing the embedding model"
+          },
+          "chunking_strategy": {
+            "type": "string",
+            "title": "Chunking Strategy",
+            "description": "Strategy for chunking the file or text (e.g., 'sentence', 'paragraph')"
+          },
+          "max_segment_size": {
+            "type": "integer",
+            "title": "Max Segment Size",
+            "description": "The maximum size of each chunk/segment (in characters or tokens)"
+          },
+          "max_overlap_size": {
+            "type": "integer",
+            "title": "Max Overlap Size",
+            "description": "The maximum overlap size between chunks (in characters or tokens)"
+          }
+        },
+        "type": "object",
+        "required": [
+          "request_id",
+          "vectordb_provider",
+          "collection_name",
+          "embedding_model",
+          "embedding_model_apikey",
+          "chunking_strategy",
+          "max_segment_size",
+          "max_overlap_size"
+        ],
+        "title": "VectorStoreSetupRequest",
+        "example": {
+          "chunking_strategy": "sentence",
+          "collection_name": "my_collection",
+          "embedding_model": "OpenAI",
+          "embedding_model_apikey": "your_embedding_model_apikey",
+          "file_count": 2,
+          "max_overlap_size": 50,
+          "max_segment_size": 500,
+          "postgres_dbname": "my_database",
+          "postgres_host": "localhost",
+          "postgres_password": "password",
+          "postgres_table_name": "my_table",
+          "postgres_user": "user",
+          "request_id": "123e4567-e89b-12d3-a456-426614174000",
+          "vectordb_provider": "Postgres"
+        }
+      }
+    }
+  }
+}
