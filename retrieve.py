@@ -72,4 +72,4 @@ async def retrieve_from_store(request: VectorStoreRetrieveRequest):
         return HTTPException(400, f"Vector database type unidentified: {vectordb}")
 
     # Step 5: Return response to the user
-    return {"message": "Added data to vector store successfully"}
+    return {"message": "Retrieved data from vector store successfully"}
