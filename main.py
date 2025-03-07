@@ -1,9 +1,10 @@
 from fastapi import FastAPI, Form, File, UploadFile, HTTPException, status
 from models.RequestModel import VectorStoreSetupRequest, VectorStoreRetrieveRequest
-from models.ResponseModel import RetrieveResponseModel
+from models.ResponseModel import RetrieveResponseModel, Chunk
 from request_registry import RequestRegistry
 from validate_request import missing_vectordb_params
-from process import add_file_to_store
+from ingest import ingest_to_store
+from retrieve import retrieve_from_store
 
 app = FastAPI()
 
@@ -40,7 +41,7 @@ async def upload(requestId: str = Form(...), file:UploadFile = File(...) ):
     else:
         # Add the file to the vector store
         try:
-            response = await add_file_to_store(configurations, file)
+            response = await ingest_to_store(configurations, file)
             print(response)
         except Exception as e:
             return e
@@ -48,6 +49,22 @@ async def upload(requestId: str = Form(...), file:UploadFile = File(...) ):
     return status.HTTP_201_CREATED
 
 
-@app.post("/retrieve")
-async def retrieve(request: VectorStoreRetrieveRequest) -> RetrieveResponseModel:
-    return "Received API Call to /retrieve"
+@app.post("/retrieve", response_model=None)
+async def retrieve(request: VectorStoreRetrieveRequest):
+    # Check if the necessary properties are present in the request
+    # Returns None if all properties are present, else returns an HTTPException
+    http_exception = missing_vectordb_params(request)
+    if http_exception is not None:
+        return http_exception
+    
+    else:
+        # Retrieve the data from the vector store
+        try:
+            response = await retrieve_from_store(request)
+
+            # Assuming response is the result from index.query() function of pinecone
+            chunks = [Chunk(text=match['metadata']['text'], source=match['metadata']['source']) for match in response['matches']]
+            return RetrieveResponseModel(query=request.user_query, retrieved_chunks=chunks)
+            # return response
+        except Exception as e:
+            return e

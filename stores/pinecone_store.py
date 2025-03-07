@@ -51,3 +51,18 @@ def add_to_pinecone_index(documents, index_name, pinecone_apikey, batch_size=100
     print(f"Completed upserting all documents to store. Total batches: {len(upsert_responses)}")
     
     return upsert_responses
+
+
+def retrieve_from_pinecone_index(query_vector, index_name, pinecone_apikey, top_k=5):
+    print("Received call to retrieve from store.")
+    pc = Pinecone(api_key=pinecone_apikey)
+    index = pc.Index(index_name)
+
+
+    response = index.query(
+            query_vector=query_vector,
+            top_k=top_k,
+            include_metadata=True
+            )
+
+    return response

@@ -1,5 +1,5 @@
 from fastapi import HTTPException
-from embeddings.openai_embeddings import embed_with_openai
+from embeddings.openai_embeddings import embed_document_with_openai
 from stores.pinecone_store import add_to_pinecone_index
 from stores.chroma_store import add_to_chroma_collection
 from stores.postgres_store import add_to_pgvector
@@ -9,7 +9,7 @@ from chunker import chunk_data
 from models.ConfigurationsModel import ConfigurationsModel
 
 
-async def add_file_to_store(configurations: ConfigurationsModel, file):
+async def ingest_to_store(configurations: ConfigurationsModel, file):
 
     ## Step 1: Parse the content
     input_text = parse_content(file.file)
@@ -37,7 +37,7 @@ async def add_file_to_store(configurations: ConfigurationsModel, file):
 
     if embedding_model == "openai":
         try:
-            embeddings = await embed_with_openai(
+            embeddings = await embed_document_with_openai(
                 text_inputs=chunked_text,
                 apikey=embedding_model_apikey,
                 source=file.filename
