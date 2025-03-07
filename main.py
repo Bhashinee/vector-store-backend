@@ -41,10 +41,10 @@ async def details(request: VectorStoreSetupRequest):
     
 
 @app.post("/upload")
-async def upload(requestId: str = Form(...), file:UploadFile = File(...) ):
+async def upload(request_id: str = Form(...), file:UploadFile = File(...) ):
 
     # Retrieve the configurations for the requestId
-    configurations = request_details.get_configurations(request_id=requestId)
+    configurations = request_details.get_configurations(request_id=request_id)
 
     if configurations is None:
         return HTTPException(400, "RequestId not recognized or exceeded file count for requestId")
