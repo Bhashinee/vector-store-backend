@@ -45,30 +45,19 @@ def chunk_data(data: str, chunk_type: str, chunk_size: int = 100, max_chunk_size
             chunks.append(chunk)
         return chunks
     
-    # Word-based chunking with overlap
-    elif chunk_type == 'word':
-        words = data.split()
-        if overlap >= chunk_size:
-            raise ValueError("Overlap must be smaller than chunk_size for word chunking")
+    # Chunk based on paragraph
+    elif chunk_type == 'paragraph':
+        paragraphs = data.split("\n\n")
+        if overlap >= len(paragraphs):
+            raise ValueError("Overlap cannot be larger than the number of paragraphs")
         chunks = []
         step = max(1, chunk_size - overlap)
-        for i in range(0, len(words), step):
-            end = min(i + chunk_size, len(words))
-            chunk = " ".join(words[i:end])
+        for i in range(0, len(paragraphs), step):
+            end = min(i + chunk_size, len(paragraphs))
+            chunk = "\n\n".join(paragraphs[i:end])
             chunks.append(chunk)
         return chunks
     
-    # Character-based chunking with overlap
-    elif chunk_type == 'character':
-        if overlap >= chunk_size:
-            raise ValueError("Overlap must be smaller than chunk_size for character chunking")
-        chunks = []
-        step = max(1, chunk_size - overlap)
-        for i in range(0, len(data), step):
-            end = min(i + chunk_size, len(data))
-            chunk = data[i:end]
-            chunks.append(chunk)
-        return chunks
     
     # Recursive chunking with overlap
     elif chunk_type == 'recursive':
@@ -143,4 +132,4 @@ def chunk_data(data: str, chunk_type: str, chunk_size: int = 100, max_chunk_size
         return recursive_split(data, max_chunk_size, overlap)
     
     else:
-        raise ValueError("Invalid chunk_type. Supported types: 'sentence', 'word', 'character', 'recursive'")
+        raise ValueError("Invalid chunk_type. Supported types: 'sentence', 'paragraph', 'recursive'")
