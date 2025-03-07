@@ -4,7 +4,7 @@ import asyncio
 from models.VectorStoreRecord import VectorStoreRecord
 
 # Function to get embeddings for multiple text chunks from OpenAI API (async version)
-async def embed_with_openai(text_inputs: list[str], apikey: str):
+async def embed_with_openai(text_inputs: list[str], apikey: str, source: str) -> list[VectorStoreRecord]:
     print("Received call to generate embeddings")
     try:
         # Create openai client
@@ -23,7 +23,7 @@ async def embed_with_openai(text_inputs: list[str], apikey: str):
             result = VectorStoreRecord(
                 embedding = embedding_data.embedding,
                 text_segment = text_inputs[idx],
-                source = "plain-text"
+                source = source
             )
             results.append(result)
 

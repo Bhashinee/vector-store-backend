@@ -2,7 +2,8 @@ from fastapi import FastAPI, Form, File, UploadFile, HTTPException, status
 from models.RequestModel import VectorStoreSetupRequest, VectorStoreRetrieveRequest
 from models.ResponseModel import RetrieveResponseModel
 from request_registry import RequestRegistry
-from process import add_to_store
+from validate_request import missing_vectordb_params
+from process import add_file_to_store
 
 app = FastAPI()
 
@@ -13,11 +14,19 @@ request_details = RequestRegistry()
 
 @app.post("/setup")
 async def details(request: VectorStoreSetupRequest):
+    # Check if the necessary properties are present in the request
+    # Returns None if all properties are present, else returns an HTTPException
+    http_exception = missing_vectordb_params(request)
+    if http_exception is not None:
+        return http_exception
+    
     try:
+        # Add request to the registry
         request_details.add_request(request)
     except:
         return HTTPException(400, "Request couldn't be processed")
-    return status.HTTP_202_ACCEPTED
+    
+    return status.HTTP_200_OK
     
 
 @app.post("/upload")
@@ -31,9 +40,11 @@ async def upload(requestId: str = Form(...), file:UploadFile = File(...) ):
     else:
         # Add the file to the vector store
         try:
-            response = await add_to_store(configurations, file.file)
-        except NotImplementedError:
-            return status.HTTP_503_SERVICE_UNAVAILABLE
+            response = await add_file_to_store(configurations, file)
+            print(response)
+        except Exception as e:
+            return e
+        
     return status.HTTP_201_CREATED
 
 
