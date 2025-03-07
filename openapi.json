@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "FastAPI",
-    "version": "0.1.1"
+    "version": "0.1.2"
   },
   "paths": {
     "/setup": {
@@ -256,7 +256,7 @@
           "chroma_port": {
             "anyOf": [
               {
-                "type": "string"
+                "type": "integer"
               },
               {
                 "type": "null"
@@ -425,7 +425,7 @@
           "chroma_port": {
             "anyOf": [
               {
-                "type": "string"
+                "type": "integer"
               },
               {
                 "type": "null"
