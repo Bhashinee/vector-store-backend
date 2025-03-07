@@ -1,8 +1,9 @@
 from fastapi import HTTPException
 from embeddings.openai_embeddings import embed_query_with_openai
 from stores.pinecone_store import retrieve_from_pinecone_index
-from stores.chroma_store import add_to_chroma_collection
+from stores.chroma_store import retrieve_from_chroma_collection
 from stores.postgres_store import add_to_pgvector
+from models.ResponseModel import Chunk
 
 from models.RequestModel import VectorStoreRetrieveRequest
 
@@ -44,7 +45,17 @@ async def retrieve_from_store(request: VectorStoreRetrieveRequest):
             # Filter out chunks with similarity less than min_similarity
             ## NOT IMPLEMENTED YET
 
-            return result
+                        # Assuming response is the result from index.query() function of pinecone
+            chunks = []
+
+            for match in result["matches"]:
+                chunk = Chunk(
+                    chunk_id=match["id"],
+                    chunk_text=match["text"],
+                    score=match["score"]
+                )
+                chunks.append(chunk)
+                
         except Exception as e:
             return HTTPException(500, f"Error retrieving data from pinecone: {str(e)}")
 
@@ -53,7 +64,25 @@ async def retrieve_from_store(request: VectorStoreRetrieveRequest):
             chroma_url = request.chroma_url
             chroma_port = request.chroma_port
             
-            raise NotImplementedError("Chroma retrieval not implemented")
+            result = retrieve_from_chroma_collection(
+                query_vector=query_vector,
+                collection_name=collection_name,
+                host_url=chroma_url,
+                port=chroma_port
+            )
+
+            chunks = []
+
+            for i in range(len(result["ids"][0])):
+                if result["distances"][0][i] < min_similarity:
+                    continue
+                chunk = Chunk(
+                    text=result["metadatas"][0][i]["text_segment"],
+                    source=result["metadatas"][0][i]["source"]
+                )
+                chunks.append(chunk)   
+            return chunks
+
         except Exception as e:
             return HTTPException(500, f"Error adding data to chroma: {str(e)}")
 
