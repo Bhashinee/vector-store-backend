@@ -3,8 +3,6 @@ from embeddings.openai_embeddings import embed_query_with_openai
 from stores.pinecone_store import retrieve_from_pinecone_index
 from stores.chroma_store import add_to_chroma_collection
 from stores.postgres_store import add_to_pgvector
-from parser import parse_content
-from chunker import chunk_data
 
 from models.RequestModel import VectorStoreRetrieveRequest
 
@@ -32,6 +30,7 @@ async def retrieve_from_store(request: VectorStoreRetrieveRequest):
     ## Step 4: Add embeddings to vector store
     vectordb = request.vectordb_provider
     collection_name = request.collection_name
+    min_similarity = request.min_similarity_threshold
 
     if vectordb == "pinecone":
         pinecone_apikey = request.pinecone_apikey
@@ -41,7 +40,10 @@ async def retrieve_from_store(request: VectorStoreRetrieveRequest):
                 index_name=collection_name,
                 pinecone_apikey=pinecone_apikey
             )
-            print(result)
+            
+            # Filter out chunks with similarity less than min_similarity
+            ## NOT IMPLEMENTED YET
+
             return result
         except Exception as e:
             return HTTPException(500, f"Error retrieving data from pinecone: {str(e)}")

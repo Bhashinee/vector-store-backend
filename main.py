@@ -73,7 +73,16 @@ async def retrieve(request: VectorStoreRetrieveRequest):
             response = await retrieve_from_store(request)
 
             # Assuming response is the result from index.query() function of pinecone
-            chunks = [Chunk(text=match['metadata']['text'], source=match['metadata']['source']) for match in response['matches']]
+            chunks = []
+
+            for match in response["matches"]:
+                chunk = Chunk(
+                    chunk_id=match["id"],
+                    chunk_text=match["text"],
+                    score=match["score"]
+                )
+                chunks.append(chunk)
+                
             return RetrieveResponseModel(query=request.user_query, retrieved_chunks=chunks)
             # return response
         except Exception as e:

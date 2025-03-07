@@ -60,9 +60,10 @@ def retrieve_from_pinecone_index(query_vector, index_name, pinecone_apikey, top_
 
 
     response = index.query(
-            query_vector=query_vector,
+            vector=query_vector,
             top_k=top_k,
-            include_metadata=True
+            include_metadata=True,
+            namespace="ai"
             )
 
     return response
