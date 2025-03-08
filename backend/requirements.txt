@@ -1,0 +1,9 @@
+fastapi[standard]
+openai
+pinecone
+nltk
+chromadb
+pgvector
+psycopg
+unstructured[pdf]
+python-multipart
