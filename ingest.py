@@ -86,7 +86,6 @@ async def ingest_to_store(configurations: ConfigurationsModel, file):
         try:
             embeddings = [embedding.to_pgvector_format() for embedding in embeddings]
             postgres_host = configurations["postgres_host"]
-            postgres_port = configurations["postgres_port"]
             postgres_user = configurations["postgres_user"]
             postgres_password = configurations["postgres_password"]
             postgres_dbname = configurations["postgres_dbname"]
@@ -94,13 +93,13 @@ async def ingest_to_store(configurations: ConfigurationsModel, file):
             add_to_pgvector(
                 embeddings=embeddings,
                 host=postgres_host,
-                port=postgres_port,
                 password=postgres_password,
                 user=postgres_user,
                 dbname=postgres_dbname,
                 table_name=postgres_table_name
             )
         except Exception as e:
+            raise e
             raise HTTPException(500, f"Error adding data to pgvector: {str(e)}")
     else:
         raise HTTPException(400, f"Vector database type unidentified: {vectordb}")
