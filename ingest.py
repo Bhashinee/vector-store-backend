@@ -99,7 +99,6 @@ async def ingest_to_store(configurations: ConfigurationsModel, file):
                 table_name=postgres_table_name
             )
         except Exception as e:
-            raise e
             raise HTTPException(500, f"Error adding data to pgvector: {str(e)}")
     else:
         raise HTTPException(400, f"Vector database type unidentified: {vectordb}")
