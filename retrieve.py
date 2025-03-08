@@ -21,11 +21,10 @@ async def retrieve_from_store(request: VectorStoreRetrieveRequest):
                 apikey=embedding_model_apikey
             )
         except Exception as e:
-            print(e)
-            return HTTPException(500, f"Error generating embeddings: {str(e)}")
+            raise HTTPException(500, f"Error generating embeddings: {str(e)}")
     else:
         ## NOTE: Currently only openai is supported for embeddings
-        return HTTPException(501, "Embedding model not supported")
+        raise HTTPException(501, "Embedding model not supported")
     
 
     ## Step 4: Add embeddings to vector store
@@ -57,7 +56,7 @@ async def retrieve_from_store(request: VectorStoreRetrieveRequest):
                 chunks.append(chunk)
                 
         except Exception as e:
-            return HTTPException(500, f"Error retrieving data from pinecone: {str(e)}")
+            raise HTTPException(500, f"Error retrieving data from pinecone: {str(e)}")
 
     elif vectordb == "chroma":
         try:
@@ -84,7 +83,7 @@ async def retrieve_from_store(request: VectorStoreRetrieveRequest):
             return chunks
 
         except Exception as e:
-            return HTTPException(500, f"Error adding data to chroma: {str(e)}")
+            raise HTTPException(500, f"Error adding data to chroma: {str(e)}")
 
     elif vectordb == "pgvector":
         try:
@@ -96,9 +95,9 @@ async def retrieve_from_store(request: VectorStoreRetrieveRequest):
             
             raise NotImplementedError("Postgres retrieval not implemented")
         except Exception as e:
-            return HTTPException(500, f"Error adding data to pgvector: {str(e)}")
+            raise HTTPException(500, f"Error adding data to pgvector: {str(e)}")
     else:
-        return HTTPException(400, f"Vector database type unidentified: {vectordb}")
+        raise HTTPException(400, f"Vector database type unidentified: {vectordb}")
 
     # Step 5: Return response to the user
     return {"message": "Retrieved data from vector store successfully"}

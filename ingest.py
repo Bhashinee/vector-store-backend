@@ -12,7 +12,10 @@ from models.ConfigurationsModel import ConfigurationsModel
 async def ingest_to_store(configurations: ConfigurationsModel, file):
 
     ## Step 1: Parse the content
-    input_text = parse_content(file.file)
+    try:
+        input_text = parse_content(file.file)
+    except Exception as e:
+        raise HTTPException(500, "Could not parse the file. Error: ", str(e))
 
     ## Step 2: Chunk the data
     # Get the parameters from the configurations
@@ -28,7 +31,7 @@ async def ingest_to_store(configurations: ConfigurationsModel, file):
             overlap=overlap
             )
     except Exception as e:
-        return HTTPException(500, f"Error chunking data, {str(e)}")
+        raise HTTPException(500, f"Error chunking data, {str(e)}")
 
     ## Step 3: Generate embeddings
     # Get the embedding model and apikey from configurations
@@ -43,10 +46,10 @@ async def ingest_to_store(configurations: ConfigurationsModel, file):
                 source=file.filename
             )
         except Exception as e:
-            return HTTPException(500, f"Error generating embeddings: {str(e)}")
+            raise HTTPException(500, f"Error generating embeddings: {str(e)}")
     else:
         ## NOTE: Currently only openai is supported for embeddings
-        return HTTPException(501, "Embedding model not supported")
+        raise HTTPException(501, "Embedding model not supported")
     
 
     ## Step 4: Add embeddings to vector store
@@ -63,7 +66,7 @@ async def ingest_to_store(configurations: ConfigurationsModel, file):
                 pinecone_apikey=pinecone_apikey
             )
         except Exception as e:
-            return HTTPException(500, f"Error adding data to pinecone: {str(e)}")
+            raise HTTPException(500, f"Error adding data to pinecone: {str(e)}")
 
     elif vectordb == "chroma":
         try:
@@ -77,7 +80,7 @@ async def ingest_to_store(configurations: ConfigurationsModel, file):
                 port=chroma_port
             )
         except Exception as e:
-            return HTTPException(500, f"Error adding data to chroma: {str(e)}")
+            raise HTTPException(500, f"Error adding data to chroma: {str(e)}")
 
     elif vectordb == "pgvector":
         try:
@@ -98,9 +101,9 @@ async def ingest_to_store(configurations: ConfigurationsModel, file):
                 table_name=postgres_table_name
             )
         except Exception as e:
-            return HTTPException(500, f"Error adding data to pgvector: {str(e)}")
+            raise HTTPException(500, f"Error adding data to pgvector: {str(e)}")
     else:
-        return HTTPException(400, f"Vector database type unidentified: {vectordb}")
+        raise HTTPException(400, f"Vector database type unidentified: {vectordb}")
 
     # Step 5: Return response to the user
     return {"message": "Added data to vector store successfully"}

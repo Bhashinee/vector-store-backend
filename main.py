@@ -1,11 +1,11 @@
 from fastapi import FastAPI, Form, File, UploadFile, HTTPException, status
+from fastapi.middleware.cors import CORSMiddleware
 from models.RequestModel import VectorStoreSetupRequest, VectorStoreRetrieveRequest
 from models.ResponseModel import RetrieveResponseModel, Chunk
 from request_registry import RequestRegistry
-from validate_request import missing_vectordb_params
+from validate_request import check_for_missing_params
 from ingest import ingest_to_store
 from retrieve import retrieve_from_store
-from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 
@@ -27,15 +27,13 @@ request_details = RequestRegistry()
 async def details(request: VectorStoreSetupRequest):
     # Check if the necessary properties are present in the request
     # Returns None if all properties are present, else returns an HTTPException
-    http_exception = missing_vectordb_params(request)
-    if http_exception is not None:
-        return http_exception
+    _ = check_for_missing_params(request)
     
     try:
         # Add request to the registry
         request_details.add_request(request)
     except:
-        return HTTPException(400, "Request couldn't be processed")
+        raise HTTPException(400, "Request couldn't be processed")
     
     return status.HTTP_200_OK
     
@@ -47,31 +45,19 @@ async def upload(request_id: str = Form(...), file:UploadFile = File(...) ):
     configurations = request_details.get_configurations(request_id=request_id)
 
     if configurations is None:
-        return HTTPException(400, "RequestId not recognized or exceeded file count for requestId")
+        raise HTTPException(400, "RequestId not recognized or exceeded file count for requestId")
     else:
         # Add the file to the vector store
-        try:
-            response = await ingest_to_store(configurations, file)
-            print(response)
-        except Exception as e:
-            return e
-        
-    return status.HTTP_201_CREATED
+        response = await ingest_to_store(configurations, file)
+        return response
 
 
 @app.post("/retrieve", response_model=None)
 async def retrieve(request: VectorStoreRetrieveRequest):
     # Check if the necessary properties are present in the request
-    # Returns None if all properties are present, else returns an HTTPException
-    http_exception = missing_vectordb_params(request)
-    if http_exception is not None:
-        return http_exception
+    # Raises HttpException if any parameters are missing
+    _ = check_for_missing_params(request)
     
-    else:
-        # Retrieve the data from the vector store
-        try:
-            response = await retrieve_from_store(request)
-            return RetrieveResponseModel(query=request.user_query, retrieved_chunks=response)
-            # return response
-        except Exception as e:
-            return e
+    # Retrieve the data from the vector store
+    response = await retrieve_from_store(request)
+    return RetrieveResponseModel(query=request.user_query, retrieved_chunks=response)
