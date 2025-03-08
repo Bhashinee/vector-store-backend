@@ -2,7 +2,7 @@ from fastapi import HTTPException
 from embeddings.openai_embeddings import embed_query_with_openai
 from stores.pinecone_store import retrieve_from_pinecone_index
 from stores.chroma_store import retrieve_from_chroma_collection
-from stores.postgres_store import add_to_pgvector
+from stores.postgres_store import retrieve_from_pgvector
 from models.ResponseModel import Chunk
 
 from models.RequestModel import VectorStoreRetrieveRequest
@@ -93,11 +93,25 @@ async def retrieve_from_store(request: VectorStoreRetrieveRequest):
             postgres_dbname = request.postgres_dbname
             postgres_table_name = request.postgres_table_name
             
-            raise NotImplementedError("Postgres retrieval not implemented")
+            results = retrieve_from_pgvector(
+                query_vector=query_vector,
+                host=postgres_host,
+                password=postgres_password,
+                user=postgres_user,
+                dbname=postgres_dbname,
+                table_name=postgres_table_name
+            )
+
+            chunks = []
+            for chunk in results:
+                chunks.append(Chunk(
+                    text=chunk["text_segment"],
+                    source=chunk["source"]
+                ))
+
+            return chunks
+
         except Exception as e:
             raise HTTPException(500, f"Error adding data to pgvector: {str(e)}")
     else:
         raise HTTPException(400, f"Vector database type unidentified: {vectordb}")
-
-    # Step 5: Return response to the user
-    return {"message": "Retrieved data from vector store successfully"}
