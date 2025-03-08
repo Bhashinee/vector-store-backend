@@ -50,10 +50,13 @@ async def retrieve_from_store(request: VectorStoreRetrieveRequest):
             for match in result["matches"]:
                 chunk = Chunk(
                     chunk_id=match["id"],
-                    chunk_text=match["text"],
+                    text=match["metadata"]["text_segment"],
+                    source=match["metadata"]["source"],
                     score=match["score"]
                 )
                 chunks.append(chunk)
+
+            return chunks
                 
         except Exception as e:
             raise HTTPException(500, f"Error retrieving data from pinecone: {str(e)}")
