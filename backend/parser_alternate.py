@@ -7,7 +7,6 @@ def parse_content(file):
     for page in reader.pages:
         content += page.extract_text()
 
-    print(content)
     return content
 
     
