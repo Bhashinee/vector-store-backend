@@ -3,9 +3,9 @@ from typing import List, Union
 
 # Download required NLTK data (only needs to run once)
 try:
-    nltk.data.find('tokenizers/punkt')
+    nltk.data.find('tokenizers/punkt_tab')
 except LookupError:
-    nltk.download('punkt')
+    nltk.download('punkt_tab')
 
 def chunk_data(data: str, chunk_type: str, chunk_size: int = 100, max_chunk_size: int = 500, overlap: int = 0) -> List[str]:
     """
