@@ -3,7 +3,7 @@ from embeddings.openai_embeddings import embed_document_with_openai
 from stores.pinecone_store import add_to_pinecone_index
 from stores.chroma_store import add_to_chroma_collection
 from stores.postgres_store import add_to_pgvector
-from parser_alternate import parse_content
+from parser import parse_content
 from chunker import chunk_data
 
 from models.ConfigurationsModel import ConfigurationsModel

@@ -4,6 +4,6 @@ pinecone
 nltk
 chromadb
 pgvector
-psycopg
+psycopg[binary]
 unstructured[pdf]
 python-multipart
