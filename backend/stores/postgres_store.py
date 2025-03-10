@@ -3,9 +3,9 @@ from psycopg import sql
 from pgvector.psycopg import register_vector, Vector
 
 
-def add_to_pgvector(embeddings, host, password, user, dbname, table_name):
+def add_to_pgvector(embeddings, host, port, password, user, dbname, table_name):
     # Connect to an existing database
-    connection_string = f"host={host} user={user} password={password} dbname={dbname}"
+    connection_string = f"host={host} port={port} user={user} password={password} dbname={dbname}"
 
     print(connection_string)
 
@@ -38,8 +38,8 @@ def add_to_pgvector(embeddings, host, password, user, dbname, table_name):
 
 
 
-def retrieve_from_pgvector(query_vector, host, password, user, dbname, table_name):
-    connection_string = f"host={host} user={user} password={password} dbname={dbname}"
+def retrieve_from_pgvector(query_vector, host, port, password, user, dbname, table_name):
+    connection_string = f"host={host} port={port} user={user} password={password} dbname={dbname}"
 
     with psycopg.connect(connection_string) as conn:
 

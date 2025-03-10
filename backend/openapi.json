@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "FastAPI",
-    "version": "0.1.2"
+    "version": "0.1.3"
   },
   "paths": {
     "/setup": {
@@ -96,9 +96,7 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/RetrieveResponseModel"
-                }
+                "schema": {}
               }
             }
           },
@@ -120,9 +118,9 @@
     "schemas": {
       "Body_upload_upload_post": {
         "properties": {
-          "requestId": {
+          "request_id": {
             "type": "string",
-            "title": "Requestid"
+            "title": "Request Id"
           },
           "file": {
             "type": "string",
@@ -132,28 +130,10 @@
         },
         "type": "object",
         "required": [
-          "requestId",
+          "request_id",
           "file"
         ],
         "title": "Body_upload_upload_post"
-      },
-      "Chunk": {
-        "properties": {
-          "text": {
-            "type": "string",
-            "title": "Text"
-          },
-          "source": {
-            "type": "string",
-            "title": "Source"
-          }
-        },
-        "type": "object",
-        "required": [
-          "text",
-          "source"
-        ],
-        "title": "Chunk"
       },
       "HTTPValidationError": {
         "properties": {
@@ -167,27 +147,6 @@
         },
         "type": "object",
         "title": "HTTPValidationError"
-      },
-      "RetrieveResponseModel": {
-        "properties": {
-          "query": {
-            "type": "string",
-            "title": "Query"
-          },
-          "retrieved_chunks": {
-            "items": {
-              "$ref": "#/components/schemas/Chunk"
-            },
-            "type": "array",
-            "title": "Retrieved Chunks"
-          }
-        },
-        "type": "object",
-        "required": [
-          "query",
-          "retrieved_chunks"
-        ],
-        "title": "RetrieveResponseModel"
       },
       "ValidationError": {
         "properties": {
@@ -241,7 +200,7 @@
             "title": "Pinecone Apikey",
             "description": "API key for accessing the vector database provider"
           },
-          "chroma_url": {
+          "chroma_host": {
             "anyOf": [
               {
                 "type": "string"
@@ -250,8 +209,8 @@
                 "type": "null"
               }
             ],
-            "title": "Chroma Url",
-            "description": "The URL for the Chroma vector database instance"
+            "title": "Chroma Host",
+            "description": "ChromaDB Host"
           },
           "chroma_port": {
             "anyOf": [
@@ -263,7 +222,8 @@
               }
             ],
             "title": "Chroma Port",
-            "description": "The port Chroma is running on"
+            "description": "The port Chroma is running on",
+            "default": 8000
           },
           "postgres_host": {
             "anyOf": [
@@ -276,6 +236,19 @@
             ],
             "title": "Postgres Host",
             "description": "Host of the Postgres Database"
+          },
+          "postgres_port": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Postgres Port",
+            "description": "Port of the Postgres Database",
+            "default": 5432
           },
           "postgres_user": {
             "anyOf": [
@@ -370,7 +343,8 @@
         ],
         "title": "VectorStoreRetrieveRequest",
         "example": {
-          "chroma_url": "http://localhost:8000",
+          "chroma_host": "localhost",
+          "chroma_port": 8000,
           "collection_name": "my_collection",
           "embedding_model": "OpenAI",
           "embedding_model_apikey": "your_embedding_model_apikey",
@@ -410,7 +384,7 @@
             "title": "Pinecone Apikey",
             "description": "API key for accessing the vector database provider"
           },
-          "chroma_url": {
+          "chroma_host": {
             "anyOf": [
               {
                 "type": "string"
@@ -419,8 +393,8 @@
                 "type": "null"
               }
             ],
-            "title": "Chroma Url",
-            "description": "The URL for the Chroma vector database instance"
+            "title": "Chroma Host",
+            "description": "ChromaDB Host"
           },
           "chroma_port": {
             "anyOf": [
@@ -432,7 +406,8 @@
               }
             ],
             "title": "Chroma Port",
-            "description": "The port Chroma is running on"
+            "description": "The port Chroma is running on",
+            "default": 8000
           },
           "postgres_host": {
             "anyOf": [
@@ -445,6 +420,19 @@
             ],
             "title": "Postgres Host",
             "description": "Host of the Postgres Database"
+          },
+          "postgres_port": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Postgres Port",
+            "description": "Port of the Postgres Database",
+            "default": 5432
           },
           "postgres_user": {
             "anyOf": [
@@ -548,6 +536,7 @@
           "postgres_dbname": "my_database",
           "postgres_host": "localhost",
           "postgres_password": "password",
+          "postgres_port": 5432,
           "postgres_table_name": "my_table",
           "postgres_user": "user",
           "request_id": "123e4567-e89b-12d3-a456-426614174000",

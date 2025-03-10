@@ -91,6 +91,7 @@ async def retrieve_from_store(request: VectorStoreRetrieveRequest):
     elif vectordb == "pgvector":
         try:
             postgres_host = request.postgres_host
+            postgres_port = request.postgres_port
             postgres_user = request.postgres_user
             postgres_password = request.postgres_password
             postgres_dbname = request.postgres_dbname
@@ -99,6 +100,7 @@ async def retrieve_from_store(request: VectorStoreRetrieveRequest):
             results = retrieve_from_pgvector(
                 query_vector=query_vector,
                 host=postgres_host,
+                port=postgres_port,
                 password=postgres_password,
                 user=postgres_user,
                 dbname=postgres_dbname,

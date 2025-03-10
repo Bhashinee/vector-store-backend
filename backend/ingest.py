@@ -33,6 +33,7 @@ async def ingest_to_store(configurations: ConfigurationsModel, file):
     except Exception as e:
         raise HTTPException(500, f"Error chunking data, {str(e)}")
 
+
     ## Step 3: Generate embeddings
     # Get the embedding model and apikey from configurations
     embedding_model = configurations["embedding_model"]
@@ -51,7 +52,6 @@ async def ingest_to_store(configurations: ConfigurationsModel, file):
         ## NOTE: Currently only openai is supported for embeddings
         raise HTTPException(501, "Embedding model not supported")
     
-
     ## Step 4: Add embeddings to vector store
     vectordb = configurations["vectordb_provider"]
     collection_name = configurations["collection_name"]
@@ -86,6 +86,7 @@ async def ingest_to_store(configurations: ConfigurationsModel, file):
         try:
             embeddings = [embedding.to_pgvector_format() for embedding in embeddings]
             postgres_host = configurations["postgres_host"]
+            postgres_port = configurations["postgres_port"]
             postgres_user = configurations["postgres_user"]
             postgres_password = configurations["postgres_password"]
             postgres_dbname = configurations["postgres_dbname"]
@@ -93,6 +94,7 @@ async def ingest_to_store(configurations: ConfigurationsModel, file):
             add_to_pgvector(
                 embeddings=embeddings,
                 host=postgres_host,
+                port=postgres_port,
                 password=postgres_password,
                 user=postgres_user,
                 dbname=postgres_dbname,

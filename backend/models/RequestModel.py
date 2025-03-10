@@ -8,9 +8,10 @@ class VectorStoreSetupRequest(BaseModel):
     file_count: int = Field(1, description="The number of files uploaded with the request id")
     vectordb_provider: str = Field(..., description="The provider of the vector database (e.g., 'Chroma', 'Pinecone')")
     pinecone_apikey: Optional[str] = Field(None, description="API key for accessing the vector database provider")
-    chroma_url: Optional[str] = Field(None, description="The URL for the Chroma vector database instance")
-    chroma_port: Optional[int] = Field(None, description="The port Chroma is running on")
+    chroma_host: Optional[str] = Field(None, description="ChromaDB Host")
+    chroma_port: Optional[int] = Field(8000, description="The port Chroma is running on")
     postgres_host: Optional[str] = Field(None, description="Host of the Postgres Database")
+    postgres_port: Optional[int] = Field(5432, description="Port of the Postgres Database")
     postgres_user: Optional[str] = Field(None, description="User of the Postgres Database")
     postgres_password: Optional[str] = Field(None, description="Password of the Postgres Database")
     postgres_dbname: Optional[str] = Field(None, description="Name of the Postgres Database")
@@ -29,6 +30,7 @@ class VectorStoreSetupRequest(BaseModel):
                 "file_count": 2,
                 "vectordb_provider": "Postgres",
                 "postgres_host": "localhost",
+                "postgres_port": 5432,
                 "postgres_user": "user",
                 "postgres_password": "password",
                 "postgres_dbname": "my_database",
@@ -60,9 +62,10 @@ class VectorStoreFileUploadRequest(BaseModel):
 class VectorStoreRetrieveRequest(BaseModel):
     vectordb_provider: str = Field(..., description="The provider of the vector database (e.g., 'Chroma', 'Pinecone')")
     pinecone_apikey: Optional[str] = Field(None, description="API key for accessing the vector database provider")
-    chroma_url: Optional[str] = Field(None, description="The URL for the Chroma vector database instance")
-    chroma_port: Optional[int] = Field(None, description="The port Chroma is running on")
+    chroma_host: Optional[str] = Field(None, description="ChromaDB Host")
+    chroma_port: Optional[int] = Field(8000, description="The port Chroma is running on")
     postgres_host: Optional[str] = Field(None, description="Host of the Postgres Database")
+    postgres_port: Optional[int] = Field(5432, description="Port of the Postgres Database")
     postgres_user: Optional[str] = Field(None, description="User of the Postgres Database")
     postgres_password: Optional[str] = Field(None, description="Password of the Postgres Database")
     postgres_dbname: Optional[str] = Field(None, description="Name of the Postgres Database")
@@ -79,7 +82,8 @@ class VectorStoreRetrieveRequest(BaseModel):
             "example": {
             "vectordb_provider": "Chroma",
             "pinecone_apikey": None,
-            "chroma_url": "http://localhost:8000",
+            "chroma_host": "localhost",
+            "chroma_port": 8000,
             "collection_name": "my_collection",
             "embedding_model": "OpenAI",
             "embedding_model_apikey": "your_embedding_model_apikey",
