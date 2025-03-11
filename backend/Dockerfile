@@ -72,14 +72,13 @@
     # Copy application source code
     COPY . .
     
-
     # Set environment variables
     ENV PYTHONUNBUFFERED=1 \
         PYTHONDONTWRITEBYTECODE=1 \
         NLTK_DATA=/tmp/usr/local/share/nltk_data
     
     # Expose application port (modify as needed)
-    EXPOSE 8000
+    EXPOSE 9000
     
     # Create a user with a known UID/GID within range 10000-20000.
     RUN adduser \
@@ -95,4 +94,4 @@
     USER 10014
     
     # Start the Python backend (modify for Flask, FastAPI, or Django)
-    CMD ["/bin/sh", "-c", ". /app/venv/bin/activate && uvicorn main:app --host 0.0.0.0 --port 8000"]
+    CMD ["/bin/sh", "-c", ". /app/venv/bin/activate && uvicorn main:app --host 0.0.0.0 --port 9000"]
