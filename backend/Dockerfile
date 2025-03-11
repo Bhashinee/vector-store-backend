@@ -85,7 +85,7 @@
     RUN adduser \
         --disabled-password \
         --gecos "" \
-        --home "/tmp/home" \
+        --home "/tmp" \
         --shell "/sbin/nologin" \
         --no-create-home \
         --uid 10014 \
