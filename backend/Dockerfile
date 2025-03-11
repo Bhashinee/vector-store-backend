@@ -48,7 +48,7 @@
     RUN python3 -m nltk.downloader -d tmp/usr/local/share/nltk_data punkt_tab
     
     # Set working directory
-    WORKDIR /tmp/app
+    WORKDIR /app
 
     # Install required system dependencies for OpenCV and libGL
     RUN apt-get update
@@ -64,10 +64,10 @@
     # Install dependencies (using pip cache for faster builds)
     COPY requirements.txt .
     
-    RUN python3 -m venv /tmp/app/venv
+    RUN python3 -m venv /app/venv
     
-    RUN --mount=type=cache,target=/root/.cache/pip . /tmp/app/venv/bin/activate && \
-        python3 -m pip install -r /tmp/app/requirements.txt  
+    RUN --mount=type=cache,target=/root/.cache/pip . /app/venv/bin/activate && \
+        python3 -m pip install -r /app/requirements.txt  
     
     # Copy application source code
     COPY . .
@@ -85,7 +85,7 @@
     RUN adduser \
         --disabled-password \
         --gecos "" \
-        --home "/tmp" \
+        --home "/nonexistent" \
         --shell "/sbin/nologin" \
         --no-create-home \
         --uid 10014 \
@@ -95,4 +95,4 @@
     USER 10014
     
     # Start the Python backend (modify for Flask, FastAPI, or Django)
-    CMD ["/bin/sh", "-c", ". /tmp/app/venv/bin/activate && uvicorn main:app --host 0.0.0.0 --port 9000"]
+    CMD ["/bin/sh", "-c", ". /app/venv/bin/activate && uvicorn main:app --host 0.0.0.0 --port 9000"]
