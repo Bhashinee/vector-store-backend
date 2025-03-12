@@ -6,7 +6,12 @@ nltk.data.path.append("/tmp/usr/local/share/nltk_data")
 try:
     nltk.data.find('tokenizers/punkt_tab')
 except LookupError:
-    nltk.download('punkt_tab', download_dir="/tmp")
+    nltk.download('punkt_tab', download_dir="/tmp/usr/local/share/nltk_data")
+
+try:
+    nltk.data.find('taggers/averaged_perceptron_tagger_eng')
+except LookupError:
+    nltk.download('averaged_perceptron_tagger_eng', download_dir="/tmp/usr/local/share/nltk_data")    
 
 def chunk_data(data: str, chunk_type: str, chunk_size: int = 100, max_chunk_size: int = 500, overlap: int = 0) -> List[str]:
     """
