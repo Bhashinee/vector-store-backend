@@ -46,7 +46,7 @@
     
     # Download necessary NLTK data
     RUN python3 -m nltk.downloader -d tmp/usr/local/share/nltk_data punkt_tab
-    RUN python3 -m nltk.downloader -d tmp/usr/local/share/nltk_data averaged_perceptron_tagger
+    RUN python3 -m nltk.downloader -d tmp/usr/local/share/nltk_data averaged_perceptron_tagger_eng
     
     # Set working directory
     WORKDIR /app
