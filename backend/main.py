@@ -6,6 +6,7 @@ from request_registry import RequestRegistry
 from validate_request import check_for_missing_params
 from ingest import ingest_to_store
 from retrieve import retrieve_from_store
+import os
 
 app = FastAPI()
 
@@ -40,6 +41,9 @@ async def details(request: VectorStoreSetupRequest):
 
 @app.post("/upload")
 async def upload(request_id: str = Form(...), file:UploadFile = File(...) ):
+
+    print("***********NLTK_DATA***************", os.getenv('NLTK_DATA'))
+    print("***********MPLCONFIGDIR***************", os.getenv('MPLCONFIGDIR'))
 
     # Retrieve the configurations for the requestId
     configurations = request_details.get_configurations(request_id=request_id)
